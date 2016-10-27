@@ -1,0 +1,19 @@
+/usr/lpp/mmfs/bin/mmumount all -f
+ls -l /nodeinfo/dfm
+for i in `grep ar3p /nodeinfo/dfm|awk {'print $7'}|sort`
+do
+/usr/lpp/mmfs/bin/mmmount $i
+done
+
+ls -l /nodeinfo/dfm
+df -m |grep ar3p|awk {'print $7'}|sort >> /tmp/post
+grep ar3p /nodeinfo/dfm|awk {'print $7'}|sort >> /tmp/pre
+diff /tmp/pre /tmp/post
+for i in `diff -f /tmp/pre /tmp/post|grep ar3p`
+do
+/usr/lpp/mmfs/bin/mmumount $i -f
+done
+
+/usr/lpp/mmfs/bin/mmapplypolicy lv -P policy_file -I yes
+
+dsmmigfs update -quota=999999999 fs
