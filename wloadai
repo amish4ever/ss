@@ -1,0 +1,22 @@
+file=wloadai
+while read servas wloadas state
+do
+if [[ $state = "running" ]]
+then
+udsh -t 10 -v -l root -w $servas wlctl -t -w $wloadas stop &
+elif [[ $state = "stopped" ]]
+then
+udsh -t 10 -v -l root -w $servas wlctl -t -w $wloadas disable &
+elif [[ $state = "disabled" ]]
+then
+print "$servas $wloadas $state"
+else udsh -t 10 -v -l root -w $servas wlctl -t -w $wloadas set stopped
+fi
+done < "$file"
+
+
+file=wloadai
+while read servas wloadas state
+do
+udsh -t 10 -v -l root -w $servas wlctl -t -w $wloadas enable &
+done < "$file"
